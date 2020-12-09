@@ -47,7 +47,7 @@ services:
       - ./filter.json:/usr/src/app/filter.json
         # Added by Hugo
       - ./flats.csv:/root/.hobo-sapiens/flats.csv
-  depends_on:
+    depends_on:
       - selogertoken
       - moteurimmotoken
       - torproxy
