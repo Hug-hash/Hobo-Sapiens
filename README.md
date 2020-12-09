@@ -72,7 +72,7 @@ It shows the number of notifications sent per source, time it took to collect th
 
 To run crawling without monitoring run:
 ```shell script
-docker-compose up crawler -d
+docker-compose up -d crawler
 ```
 
 ## Data Storage
