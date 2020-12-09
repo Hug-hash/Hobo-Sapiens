@@ -42,6 +42,13 @@ export HS_TELEGRAM_CHAT_ID="XXX"
 
 docker-compose up -d
 ```
+or use one of the following scripts (update the env. variables in the scripts) :
+```
+./start.sh
+```
+```
+./build_and_start.sh
+```
 
 Where the environment variables are:
 
