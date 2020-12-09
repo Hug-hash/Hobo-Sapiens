@@ -65,7 +65,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
-      - ~/.hobo-sapiens/prometheus:/prometheus
+  #    - ~/.hobo-sapiens/prometheus:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -81,7 +81,7 @@ services:
     ports:
       - 0.0.0.0:13000:3000
     volumes:
-      - ~/.hobo-sapiens/grafana:/var/lib/grafana
+  #    - ~/.hobo-sapiens/grafana:/var/lib/grafana
       - ./monitoring/grafana/provisioning:/etc/grafana/provisioning/
       - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
     environment:
