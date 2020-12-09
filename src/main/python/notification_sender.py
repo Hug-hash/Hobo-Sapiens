@@ -3,6 +3,7 @@ import traceback
 from io import BytesIO
 from os import environ
 from typing import List
+from pathlib import Path
 
 from attr import dataclass
 from prometheus_client.metrics import Counter, Histogram
@@ -48,6 +49,14 @@ class NotificationSender:
         except Exception:
             price_per_m = None
 
+        ## Added by Hugo. To get price, surface, price/m2 (to remove flat-share), district
+        storage_path=Path.home().joinpath('.hobo-sapiens', 'flats.csv')
+        with open(storage_path, 'a') as file:
+            # If 'coloc' or 'colloc' in description, set True in csv. Otherwise set False. 
+            file.write(str(notif.price) + ',' + str(notif.area) + ',' + str(price_per_m) + ',' + notif.location + ',' + str(notif.floor) + ',' + str(notif.rooms) + ',' +
+                str(notif.description.lower().find('coloc')!=-1 or notif.description.lower().find('colloc')!=-1) + ',' + notif.url + '\n')
+        ##
+
         desc = f'{notif.id}\nPrice: {notif.price} ({price_per_m}/m2)\nArea: {notif.area}\nWhere: {notif.location}\nURL: {notif.url}\n\n{notif.description}'
         desc = desc[:4090]
         self.METRICS_NOTIFICATION_COUNT.labels(notif.source).inc()
@@ -65,19 +74,19 @@ class NotificationSender:
                     self.logger.info(f"Found photo duplicates: {notif.url} vs. {seen_in['notif'].url}")
                 if len(new_images):
                     self.logger.info(f"Sending {len(new_images)} images")
-                    send_pic_res = self._send_pics(new_images, chat_id, desc,
-                                                   reply_to_message_id=reference_message)
-                    if send_pic_res and hasattr(send_pic_res[0], 'message_id'):
-                        self.image_manager.set_message_ids([v['hash'] for v in new_images.values()],
-                                                           send_pic_res[0].message_id)
+                    # send_pic_res = self._send_pics(new_images, chat_id, desc,
+                    #                                reply_to_message_id=reference_message)
+                    # if send_pic_res and hasattr(send_pic_res[0], 'message_id'):
+                    #     self.image_manager.set_message_ids([v['hash'] for v in new_images.values()],
+                    #                                        send_pic_res[0].message_id)
 
         except Exception as e:
             self.logger.error(e, traceback.format_exc())
 
-        if len(new_images):
-            self._send_message(chat_id, desc, reference_message=reference_message)
-        else:
-            self.logger.info("No new images found, not sending the message")  # TODO: check if price has changed
+        # if len(new_images):
+        #     self._send_message(chat_id, desc, reference_message=reference_message)
+        # else:
+        #     self.logger.info("No new images found, not sending the message")  # TODO: check if price has changed
 
     @nofail(retries=20, sleep=1, failback_result=None)
     def _send_message(self, chat_id, desc, reference_message=None):

@@ -45,7 +45,9 @@ services:
       - ~/.hobo-sapiens/listings:/root/.hobo-sapiens/listings
       - ~/.hobo-sapiens/image-hashes:/root/.hobo-sapiens/image-hashes
       - ./filter.json:/usr/src/app/filter.json
-    depends_on:
+        # Added by Hugo
+      - ./flats.csv:/root/.hobo-sapiens/flats.csv
+  depends_on:
       - selogertoken
       - moteurimmotoken
       - torproxy
